@@ -1,6 +1,6 @@
 import { Link } from "expo-router";
 import { Text, TouchableOpacity, View } from "react-native";
-import { styles } from "./../../styles/home.styles";
+import { styles } from "../../styles/home.styles";
 
 const index = () => {
   return (
