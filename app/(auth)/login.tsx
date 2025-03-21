@@ -1,5 +1,6 @@
-import { View, Text, Image, Touchable, TouchableOpacity } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import React from "react";
+import { StatusBar } from "expo-status-bar";
 import { styles } from "./../../styles/auth.styles";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
@@ -15,7 +16,6 @@ export default function login() {
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy: "oauth_google",
       });
-
       if (setActive && createdSessionId) {
         setActive({ session: createdSessionId });
         router.replace("/(tabs)");
@@ -27,6 +27,8 @@ export default function login() {
 
   return (
     <View style={styles.container}>
+      <StatusBar style="light" backgroundColor="#000" />
+
       <View style={styles.brandSection}>
         <View style={styles.logoContainer}>
           <Ionicons name="aperture-outline" size={32} color={COLORS.primary} />
