@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React from "react";
 import { tokenCache } from "@/cache";
 import { ClerkLoaded, ClerkProvider, useAuth } from "@clerk/clerk-expo";
-import { ConvexProviderWithClerk } from "./../node_modules/convex/src/react-clerk/ConvexProviderWithClerk";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
 
 const convex = new ConvexReactClient(process.env.EXPO_PUBLIC_CONVEX_URL!, {
