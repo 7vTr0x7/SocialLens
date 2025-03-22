@@ -22,10 +22,15 @@ export const styles = StyleSheet.create({
         borderBottomColor: COLORS.surface,
     },
     headerTitle: {
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        textAlign: 'center',
         fontSize: 18,
         fontWeight: "600",
         color: COLORS.white,
     },
+
     contentDisabled: {
         opacity: 0.7,
     },

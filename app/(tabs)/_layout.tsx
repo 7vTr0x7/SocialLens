@@ -3,8 +3,28 @@ import React from "react";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
+import { Keyboard } from "react-native";
+import { useEffect, useState } from "react";
 
 export default function TabsLayout() {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   return (
     <Tabs
       screenOptions={{
@@ -17,7 +37,7 @@ export default function TabsLayout() {
           borderTopWidth: 0,
           position: "absolute",
           elevation: 0,
-          height: 40,
+          height: isKeyboardVisible ? 0 : 50,
           paddingBottom: 8,
         },
       }}>
