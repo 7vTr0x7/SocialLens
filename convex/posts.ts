@@ -51,9 +51,9 @@ export const getFeedPosts = query({
         if (posts.length === 0) return []
 
 
-        const postsWithInfo = await Promise.all([
+        const postsWithInfo = await Promise.all(
             posts.map(async (post) => {
-                const postAuthor = await ctx.db.get(post.userId)
+                const postAuthor = (await ctx.db.get(post.userId))!
 
                 const like = await ctx.db.query("likes").withIndex("by_user_and_post", (q) =>
                     q.eq("userId", currentUser._id).eq("postId", post._id)
@@ -76,7 +76,7 @@ export const getFeedPosts = query({
 
                 }
             })
-        ])
+        )
 
 
         return postsWithInfo
