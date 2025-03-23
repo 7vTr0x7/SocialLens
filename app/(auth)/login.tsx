@@ -6,22 +6,28 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { useSSO } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
+import { useState } from "react";
 
 export default function login() {
   const { startSSOFlow } = useSSO();
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleGoogleSignIn = async () => {
+    if (loading) return;
+    setLoading(true);
     try {
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy: "oauth_google",
       });
       if (setActive && createdSessionId) {
-        setActive({ session: createdSessionId });
+        await setActive({ session: createdSessionId });
         router.replace("/(tabs)");
       }
     } catch (error) {
       console.log("OAuth Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
