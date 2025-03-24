@@ -8,6 +8,8 @@ import { COLORS } from "@/constants/theme";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import CommentsModal from "./CommentsModal";
+import { formatDistanceToNow } from "date-fns";
 
 type postProps = {
   post: {
@@ -32,6 +34,9 @@ type postProps = {
 export default function Post({ post }: postProps) {
   const [isLiked, setIsLiked] = useState<boolean>(post.isLiked);
   const [likesCount, setLikesCount] = useState<number>(post.likes);
+  const [commentsCount, setCommentsCount] = useState<number>(post.comments);
+
+  const [showComments, setShowComments] = useState(false);
 
   const toggleLike = useMutation(api.posts.toggleLike);
 
@@ -87,7 +92,7 @@ export default function Post({ post }: postProps) {
               color={isLiked ? COLORS.primary : COLORS.white}
             />
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => setShowComments(true)}>
             <Ionicons
               name="chatbubble-outline"
               size={22}
@@ -112,11 +117,28 @@ export default function Post({ post }: postProps) {
         )}
 
         <TouchableOpacity>
-          <Text style={styles.commentsText}>View all 2 comments</Text>
+          {commentsCount > 0 ? (
+            <Text
+              style={styles.commentsText}
+              onPress={() => setShowComments(true)}>
+              {`View all ${commentsCount} comments`}
+            </Text>
+          ) : (
+            <Text style={styles.commentsText}>{`No comments yet`}</Text>
+          )}
         </TouchableOpacity>
 
-        <Text style={styles.timeAgo}>2 hours ago</Text>
+        <Text style={styles.timeAgo}>
+          {formatDistanceToNow(post._creationTime, { addSuffix: true })}
+        </Text>
       </View>
+
+      <CommentsModal
+        postId={post._id}
+        visible={showComments}
+        onClose={() => setShowComments(false)}
+        onCommentsAdded={() => setCommentsCount((prev) => prev + 1)}
+      />
     </View>
   );
 }
