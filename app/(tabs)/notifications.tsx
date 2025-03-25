@@ -1,15 +1,11 @@
-import { View, Text, ScrollView, FlatList } from "react-native";
-import React from "react";
+import Loader from "@/components/Loader";
+import { Notification } from "@/components/Notification";
+import { COLORS } from "@/constants/theme";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
-import Loader from "@/components/Loader";
-import { COLORS } from "@/constants/theme";
-import { Image } from "expo-image";
-import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
-import { TouchableOpacity } from "react-native";
+import React from "react";
+import { FlatList, Text, View } from "react-native";
 import styles from "../../styles/notifications.styles";
-import { formatDistanceToNow } from "date-fns";
 
 export default function Notifications() {
   const notifications = useQuery(api.notifications.getNotifications);
@@ -25,73 +21,13 @@ export default function Notifications() {
 
       <FlatList
         data={notifications}
-        renderItem={({ item }) => <NotificationItem notification={item} />}
+        renderItem={({ item }) => <Notification notification={item} />}
         keyExtractor={(item) => item._id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.listContainer}></FlatList>
     </View>
   );
 }
-
-const NotificationItem = ({ notification }: any) => {
-  return (
-    <View style={styles.notificationItem}>
-      <View style={styles.notificationContent}>
-        <Link href={"/"} asChild>
-          <TouchableOpacity style={styles.avatarContainer}>
-            <Image
-              source={notification.sender.image}
-              style={styles.avatar}
-              contentFit="cover"
-              transition={200}
-            />
-            <View style={styles.iconBadge}>
-              {notification.type === "like" ? (
-                <Ionicons name="heart" size={14} color={COLORS.primary} />
-              ) : notification.type === "follow" ? (
-                <Ionicons name="person-add" size={14} color={"#0b5cf6"} />
-              ) : (
-                <Ionicons name="chatbubble" size={14} color={"#3b83f6"} />
-              )}
-            </View>
-          </TouchableOpacity>
-        </Link>
-
-        <View style={styles.notificationInfo}>
-          <Link href={"/"} asChild>
-            <TouchableOpacity>
-              <Text style={styles.username}>
-                {notification.sender.username}
-              </Text>
-            </TouchableOpacity>
-          </Link>
-
-          <Text style={styles.action}>
-            {notification.type === "follow"
-              ? "started following you"
-              : notification.type === "like"
-                ? "liked your post"
-                : `commented: ${notification.comment}`}
-          </Text>
-          <Text style={styles.timeAgo}>
-            {formatDistanceToNow(notification._creationTime, {
-              addSuffix: true,
-            })}
-          </Text>
-        </View>
-      </View>
-
-      {notification.postId && (
-        <Image
-          source={notification.post.imageUrl}
-          style={styles.postImage}
-          contentFit="cover"
-          transition={200}
-        />
-      )}
-    </View>
-  );
-};
 
 const NoNotificationsFound = () => {
   return (
