@@ -124,3 +124,61 @@ export const toggleLike = mutation({
 
     }
 })
+
+
+export const getUserByClerkId = query({
+    args: { clerkId: v.string() },
+    handler: async (ctx, args) => {
+        const user = await ctx.db.query("users").withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId)).unique()
+
+        return user
+    }
+})
+
+export const deletePost = mutation({
+    args: {
+        postId: v.id("posts"),
+    },
+
+    handler: async (ctx, args) => {
+        const currentUser = await getAuthenticatedUser(ctx)
+
+
+
+        const post = await ctx.db.get(args.postId)
+        if (!post) throw new Error("Post not found")
+
+
+        if (currentUser._id !== post.userId) throw new Error("Not authorized to delete post")
+
+        const likes = await ctx.db.query("likes").withIndex("by_post", (q) => q.eq("postId", args.postId)).collect()
+
+        for (let like of likes) {
+            await ctx.db.delete(like._id)
+        }
+
+        const comments = await ctx.db.query("comments").withIndex("by_post", (q) => q.eq("postId", args.postId)).collect()
+
+        for (let comment of comments) {
+            await ctx.db.delete(comment._id)
+        }
+
+        const bookmarks = await ctx.db.query("bookmarks").withIndex("by_post", (q) => q.eq("postId", args.postId)).collect()
+
+        for (let bookmark of bookmarks) {
+            await ctx.db.delete(bookmark._id)
+        }
+
+
+        await ctx.storage.delete(post.storageId)
+        await ctx.db.delete(args.postId)
+
+        await ctx.db.patch(currentUser._id, {
+            posts: Math.max(0, (currentUser.posts || 1) - 1)
+        })
+
+    }
+})
+
+
+
