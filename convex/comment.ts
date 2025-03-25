@@ -43,7 +43,7 @@ export const getComments = query({
         postId: v.id("posts")
     },
     handler: async (ctx, args) => {
-        const comments = await ctx.db.query("comments").withIndex("by_post", (q) => q.eq("postId", args.postId)).collect()
+        const comments = await ctx.db.query("comments").withIndex("by_post", (q) => q.eq("postId", args.postId)).order("desc").collect()
 
         const commentsWithInfo = await Promise.all(comments.map(async (comment) => {
             const user = await ctx.db.get(comment.userId)
