@@ -1,6 +1,7 @@
 import { useAuth } from "@clerk/clerk-expo";
 import {
   FlatList,
+  RefreshControl,
   ScrollView,
   Text,
   TouchableOpacity,
@@ -17,11 +18,20 @@ import { api } from "@/convex/_generated/api";
 import Loader from "@/components/Loader";
 import Post from "@/components/Post";
 import StoriesSection from "@/components/StoriesSection";
+import { useState } from "react";
 
 const index = () => {
   const { signOut } = useAuth();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   const posts = useQuery(api.posts.getFeedPosts);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  };
 
   if (posts === undefined) return <Loader />;
 
@@ -49,6 +59,13 @@ const index = () => {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 60 }}
         ListHeaderComponent={<StoriesSection />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor={COLORS.primary}
+          />
+        }
       />
     </View>
   );

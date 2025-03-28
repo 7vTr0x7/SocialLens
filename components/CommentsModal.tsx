@@ -23,14 +23,12 @@ type CommentsModalProps = {
   postId: Id<"posts">;
   visible: boolean;
   onClose: () => void;
-  onCommentsAdded: () => void;
 };
 
 export default function CommentsModal({
   postId,
   visible,
   onClose,
-  onCommentsAdded,
 }: CommentsModalProps) {
   const [newComment, setNewComment] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -49,7 +47,6 @@ export default function CommentsModal({
       });
 
       setNewComment("");
-      onCommentsAdded();
     } catch (error) {
       console.log("Error adding comment:", error);
     } finally {

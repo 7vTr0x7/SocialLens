@@ -58,7 +58,7 @@ export const Notification = ({ notification }: NotificationPropType) => {
         </Link>
 
         <View style={styles.notificationInfo}>
-          <Link href={"/"} asChild>
+          <Link href={`/user/${notification?.sender?._id}`} asChild>
             <TouchableOpacity>
               <Text style={styles.username}>
                 {notification.sender.username}
