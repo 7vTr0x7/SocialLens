@@ -12,10 +12,12 @@ import { COLORS } from "@/constants/theme";
 import { Image } from "expo-image";
 import { FlatList } from "react-native";
 import SelectedPost from "@/components/SelectedPost";
+import EditProfileModal from "@/components/EditProfileModal";
 
 export default function Profile() {
   const { signOut, userId } = useAuth();
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   const currentUser = useQuery(
     api.posts.getUserByClerkId,
@@ -33,9 +35,19 @@ export default function Profile() {
     userId: currentUser._id,
   });
 
-  // const updateProfile = useMutation(api.users.updateProfile);
+  const updateProfile = useMutation(api.users.updateProfile);
 
-  const handleSaveProfile = async () => {};
+  const handleSaveProfile = async () => {
+    try {
+      setIsSaving(true);
+      await updateProfile(editedProfile);
+    } catch (error) {
+      console.log("Failed to edit profile", error);
+    } finally {
+      setIsEditModalVisible(false);
+      setIsSaving(false);
+    }
+  };
 
   if (!currentUser || posts === undefined) return <Loader />;
 
@@ -114,6 +126,15 @@ export default function Profile() {
           )}
         />
       </ScrollView>
+
+      <EditProfileModal
+        isEditModalVisible={isEditModalVisible}
+        setIsEditModalVisible={setIsEditModalVisible}
+        editedProfile={editedProfile}
+        setEditedProfile={setEditedProfile}
+        handleSaveProfile={handleSaveProfile}
+        isSaving={isSaving}
+      />
 
       <SelectedPost
         selectedPost={selectedPost}
