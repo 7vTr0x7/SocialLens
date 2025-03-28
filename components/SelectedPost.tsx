@@ -6,7 +6,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { Image } from "expo-image";
 
-type SelectedImageProps = {
+type SelectedPostProps = {
   selectedPost: {
     _id: Id<"posts">;
     _creationTime: number;
@@ -20,10 +20,10 @@ type SelectedImageProps = {
   setSelectedPost: (post: Doc<"posts"> | null) => void;
 };
 
-export default function SelectedImage({
+export default function SelectedPost({
   selectedPost,
   setSelectedPost,
-}: SelectedImageProps) {
+}: SelectedPostProps) {
   return (
     <Modal
       visible={!!selectedPost}

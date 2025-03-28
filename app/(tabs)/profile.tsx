@@ -11,7 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
 import { Image } from "expo-image";
 import { FlatList } from "react-native";
-import SelectedImage from "@/components/SelectedImage";
+import SelectedPost from "@/components/SelectedPost";
 
 export default function Profile() {
   const { signOut, userId } = useAuth();
@@ -115,7 +115,7 @@ export default function Profile() {
         />
       </ScrollView>
 
-      <SelectedImage
+      <SelectedPost
         selectedPost={selectedPost}
         setSelectedPost={setSelectedPost}
       />
