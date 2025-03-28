@@ -188,3 +188,18 @@ export const deletePost = mutation({
 
 
 
+export const getPostsByUser = query({
+    args: { userId: v.id("users") },
+    handler: async (ctx, args) => {
+        const user = await ctx.db.get(args.userId);
+        if (!user) throw new Error("User not found");
+
+        const posts = await ctx.db
+            .query("posts")
+            .withIndex("by_user", (q) => q.eq("userId", args.userId))
+            .order("desc")
+            .collect();
+
+        return posts;
+    },
+});
