@@ -1,18 +1,23 @@
-import { View, Text, TouchableOpacity, ScrollView, Modal } from "react-native";
-import React, { useState } from "react";
-import { useAuth } from "@clerk/clerk-expo";
-import { useMutation, useQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { getUserByClerkId, getPostsByUser } from "../../convex/posts";
-import { Doc } from "@/convex/_generated/dataModel";
-import Loader from "@/components/Loader";
-import { styles } from "@/styles/profile.styles";
-import { Ionicons } from "@expo/vector-icons";
-import { COLORS } from "@/constants/theme";
-import { Image } from "expo-image";
-import { FlatList } from "react-native";
-import SelectedPost from "@/components/SelectedPost";
 import EditProfileModal from "@/components/EditProfileModal";
+import Loader from "@/components/Loader";
+import NoPostsFound from "@/components/NoPostsFound";
+import SelectedPost from "@/components/SelectedPost";
+import { COLORS } from "@/constants/theme";
+import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
+import { styles } from "@/styles/profile.styles";
+import { useAuth } from "@clerk/clerk-expo";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery } from "convex/react";
+import { Image } from "expo-image";
+import React, { useState } from "react";
+import {
+  FlatList,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 export default function Profile() {
   const { signOut, userId } = useAuth();
@@ -20,7 +25,7 @@ export default function Profile() {
   const [isSaving, setIsSaving] = useState(false);
 
   const currentUser = useQuery(
-    api.posts.getUserByClerkId,
+    api.users.getUserByClerkId,
     userId ? { clerkId: userId } : "skip"
   )!;
 
@@ -32,7 +37,7 @@ export default function Profile() {
   const [selectedPost, setSelectedPost] = useState<Doc<"posts"> | null>(null);
 
   const posts = useQuery(api.posts.getPostsByUser, {
-    userId: currentUser._id,
+    userId: currentUser?._id,
   });
 
   const updateProfile = useMutation(api.users.updateProfile);
@@ -143,16 +148,3 @@ export default function Profile() {
     </View>
   );
 }
-
-const NoPostsFound = () => (
-  <View
-    style={{
-      flex: 1,
-      backgroundColor: COLORS.background,
-      justifyContent: "center",
-      alignItems: "center",
-    }}>
-    <Ionicons name="image-outline" size={48} color={COLORS.white} />
-    <Text style={{ fontSize: 20, color: COLORS.white }}>No posts yet</Text>
-  </View>
-);

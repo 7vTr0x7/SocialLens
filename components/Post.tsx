@@ -1,17 +1,16 @@
-import { View, Text, Touchable, TouchableOpacity } from "react-native";
-import React, { useState } from "react";
-import styles from "@/styles/feed.styles";
-import { Link } from "expo-router";
-import { Image } from "expo-image";
-import { Ionicons } from "@expo/vector-icons";
 import { COLORS } from "@/constants/theme";
-import { Id } from "@/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import CommentsModal from "./CommentsModal";
-import { formatDistanceToNow } from "date-fns";
+import { Id } from "@/convex/_generated/dataModel";
+import styles from "@/styles/feed.styles";
 import { useUser } from "@clerk/clerk-expo";
-import { getUserByClerkId } from "../convex/posts";
+import { Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery } from "convex/react";
+import { formatDistanceToNow } from "date-fns";
+import { Image } from "expo-image";
+import { Link } from "expo-router";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import CommentsModal from "./CommentsModal";
 
 type postProps = {
   post: {
@@ -44,7 +43,7 @@ export default function Post({ post }: postProps) {
   const { user } = useUser();
 
   const currentUser = useQuery(
-    api.posts.getUserByClerkId,
+    api.users.getUserByClerkId,
     user ? { clerkId: user.id } : "skip"
   );
 
@@ -84,7 +83,13 @@ export default function Post({ post }: postProps) {
   return (
     <View style={styles.post}>
       <View style={styles.postHeader}>
-        <Link href="/">
+        <Link
+          href={
+            currentUser?._id === post.author._id
+              ? `/(tabs)/profile`
+              : `/user/${post?.author?._id}`
+          }
+          asChild>
           <TouchableOpacity style={styles.postHeaderLeft}>
             <Image
               source={post.author.image}

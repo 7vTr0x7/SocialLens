@@ -37,7 +37,7 @@ export const Notification = ({ notification }: NotificationPropType) => {
   return (
     <View style={styles.notificationItem}>
       <View style={styles.notificationContent}>
-        <Link href={"/"} asChild>
+        <Link href={`/user/${notification?.sender?._id}`} asChild>
           <TouchableOpacity style={styles.avatarContainer}>
             <Image
               source={notification.sender.image}

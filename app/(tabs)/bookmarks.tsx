@@ -1,13 +1,17 @@
-import { View, Text, ScrollView } from "react-native";
-import React from "react";
+import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
 import { api } from "@/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Loader from "@/components/Loader";
 import { COLORS } from "@/constants/theme";
 import styles from "@/styles/feed.styles";
 import { Image } from "expo-image";
+import SelectedPost from "@/components/SelectedPost";
+import { Doc } from "@/convex/_generated/dataModel";
 
 export default function Bookmarks() {
+  const [selectedPost, setSelectedPost] = useState<Doc<"posts"> | null>(null);
+
   const bookmarkedPosts = useQuery(api.bookmarks.getBookmarkedPosts);
 
   if (bookmarkedPosts === undefined) return <Loader />;
@@ -30,17 +34,24 @@ export default function Bookmarks() {
 
           return (
             <View key={post._id} style={{ width: "33.33%", padding: 1 }}>
-              <Image
-                source={post.imageUrl}
-                style={{ width: "100%", aspectRatio: 1 }}
-                contentFit="cover"
-                transition={200}
-                cachePolicy={"memory-disk"}
-              />
+              <TouchableOpacity onPress={() => setSelectedPost(post)}>
+                <Image
+                  source={post.imageUrl}
+                  style={{ width: "100%", aspectRatio: 1 }}
+                  contentFit="cover"
+                  transition={200}
+                  cachePolicy={"memory-disk"}
+                />
+              </TouchableOpacity>
             </View>
           );
         })}
       </ScrollView>
+
+      <SelectedPost
+        selectedPost={selectedPost}
+        setSelectedPost={setSelectedPost}
+      />
     </View>
   );
 }
